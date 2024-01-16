@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ScreenSound.Banco;
 
@@ -11,9 +12,11 @@ using ScreenSound.Banco;
 namespace ScreenSoundSharedDados.Migrations
 {
     [DbContext(typeof(ScreenSoundContext))]
-    partial class ScreenSoundContextModelSnapshot : ModelSnapshot
+    [Migration("20240115232427_RelacionandoMusicasEGeneros")]
+    partial class RelacionandoMusicasEGeneros
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace ScreenSoundSharedDados.Migrations
 
                     b.HasIndex("MusicasId");
 
-                    b.ToTable("GeneroMusica", (string)null);
+                    b.ToTable("GeneroMusica");
                 });
 
             modelBuilder.Entity("ScreenSound.Modelos.Artista", b =>
@@ -62,7 +65,7 @@ namespace ScreenSoundSharedDados.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Artistas", (string)null);
+                    b.ToTable("Artistas");
                 });
 
             modelBuilder.Entity("ScreenSound.Modelos.Musica", b =>
@@ -87,7 +90,7 @@ namespace ScreenSoundSharedDados.Migrations
 
                     b.HasIndex("ArtistaId");
 
-                    b.ToTable("Musicas", (string)null);
+                    b.ToTable("Musicas");
                 });
 
             modelBuilder.Entity("ScreenSoundSharedModels.Modelos.Genero", b =>
@@ -106,7 +109,7 @@ namespace ScreenSoundSharedDados.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Generos", (string)null);
+                    b.ToTable("Generos");
                 });
 
             modelBuilder.Entity("GeneroMusica", b =>

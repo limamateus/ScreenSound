@@ -2,11 +2,12 @@
 using ScreenSound.Banco;
 using ScreenSound.Modelos;
 using ScreenSoundApi.Dtos;
+using ScreenSoundSharedModels.Modelos;
 using System.Text.Json;
 
 namespace ScreenSoundApi.Endpoints
 {
-    public  static class MusicasExtensions
+    public static class MusicasExtensions
     {
         private static ICollection<MusicaResponse> EntityListToResponseList(IEnumerable<Musica> musicaList)
         {
@@ -15,12 +16,23 @@ namespace ScreenSoundApi.Endpoints
 
         private static MusicaResponse EntityToResponse(Musica musica)
         {
-            return new MusicaResponse(musica.Id, musica.Nome!);
+            return new MusicaResponse(musica.Id, musica.Nome, musica.ArtistaId, musica.Artista.Nome); 
+        }
+
+        private static ICollection<Genero> GeneroRequestConverter(ICollection<GeneroRequest> generos)
+        {
+            return generos.Select(a => RequestToEntity(a)).ToList();
+        }
+
+        private static Genero RequestToEntity(GeneroRequest genero)
+        {
+            return new Genero() { Nome = genero.Nome, Descricao = genero.Descricao };
         }
         public static void AddEndPoitsMusicas(this WebApplication app)
         {
             #region Musicas
-            app.MapGet("/Musicas", ([FromServices] DAL<Musica> dal) => {
+            app.MapGet("/Musicas", ([FromServices] DAL<Musica> dal) =>
+            {
 
                 return Results.Ok(EntityListToResponseList(dal.Listar()));
             });
@@ -50,7 +62,12 @@ namespace ScreenSoundApi.Endpoints
 
             app.MapPost("/Musica/Novo", ([FromServices] DAL<Musica> dal, [FromBody] MusicaRequest musicaRequest) =>
             {
-                var musica = new Musica(musicaRequest.nome,musicaRequest.anoLancamento);
+                var musica = new Musica(musicaRequest.nome)
+                {
+                    ArtistaId = musicaRequest.ArtistaId,
+                    AnoLancamento = musicaRequest.anoLancamento,
+                    Generos = musicaRequest.Generos is not null? GeneroRequestConverter(musicaRequest.Generos) : new List<Genero>()
+                };
                 dal.Adicionar(musica);
                 return Results.Ok(EntityToResponse(musica));
 
@@ -62,13 +79,15 @@ namespace ScreenSoundApi.Endpoints
                 var buscarMusica = dal.RecuperarPor(a => a.Id == id);
                 if (buscarMusica == null) return Results.NotFound();
 
-                buscarMusica.Nome = musicaRequest.nome;               
+                buscarMusica.Nome = musicaRequest.nome;
                 buscarMusica.AnoLancamento = musicaRequest.anoLancamento;
                 dal.Atualizar(buscarMusica);
                 return Results.NoContent();
 
 
             });
+
+
 
 
             #endregion
