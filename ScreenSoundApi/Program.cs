@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ScreenSound.Banco;
 using ScreenSound.Modelos;
 using ScreenSoundApi.Endpoints;
+using ScreenSoundSharedModels.Modelos;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -17,6 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ScreenSoundContext>();
 builder.Services.AddTransient<DAL<Artista>>();
 builder.Services.AddTransient<DAL<Musica>>();
+builder.Services.AddTransient<DAL<Genero>>();
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(opt =>
 {
@@ -38,6 +40,7 @@ if (app.Environment.IsDevelopment())
 }
 app.AddEndPoitsArtistas();
 app.AddEndPoitsMusicas();
+app.AddEndPointGeneros();
 
 
 app.UseHttpsRedirection();
